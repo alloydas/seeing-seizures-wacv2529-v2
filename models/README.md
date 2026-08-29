@@ -1,8 +1,5 @@
 # Model weights — Seeing Seizures (anonymous WACV 2027 submission)
 
-Best checkpoint per task, hosted at the anonymous folder:
-**[https://drive.google.com/drive/folders/1mAclhqRjE9wAIW_B6Jh2yF-nfW54Df5L?usp=drive_link](https://drive.google.com/drive/folders/1mAclhqRjE9wAIW_B6Jh2yF-nfW54Df5L?usp=drive_link)**
-
 Best checkpoint per task. Verify downloads with `sha256sum -c SHA256SUMS`.
 
 | Task | Backbone | File | Macro-F1 (this run) | Macro-F1 (5 seeds) |
@@ -28,3 +25,28 @@ probabilities, not logits — do not double-softmax, and strip `blocks[5].activa
 before gradient attribution. Cite the MViT checkpoint by its seed distribution
 (0.660 ± 0.016): MViT training is non-deterministic at fixed seed, so any single
 number is one draw.
+
+## EEG weights (single-channel biopotential)
+
+Retrained on the post-repair cache; every cell reproduces its published seed-42 value
+to within ±0.004 macro-F1.
+
+| Task | Model | File | Macro-F1 (this run / published) |
+|---|---|---|---|
+| Detection | TCN (best EEG) | `eeg_tcn_bin.pt` | 0.978 / 0.978 |
+| 3-class | TCN | `eeg_tcn_g3.pt` | 0.767 / 0.767 |
+| 5-class | TCN | `eeg_tcn_g5.pt` | 0.567 / 0.563 |
+| Detection | GRU (reference) | `eeg_gru_bin.pt` | 0.970 / 0.974 |
+| 3-class | GRU | `eeg_gru_g3.pt` | 0.750 / 0.750 |
+| 5-class | GRU | `eeg_gru_g5.pt` | 0.562 / 0.560 |
+
+```python
+from train_pooled_eeg import build_model
+model = build_model("tcn", 2, 128)          # ("gru"|"tcn", n_classes, hidden)
+model.load_state_dict(torch.load("eeg_tcn_bin.pt", map_location="cpu")["model"])
+```
+
+Inputs are z-scored 6 s windows at 125 Hz, shape `(B, 750, 1)`, from the first
+recorded channel; clip decisions pool per-window posteriors with log-mean. Caveat:
+19 of 20 cohort subjects carry a single ECG lead, so these are single-lead
+biopotential models, not multichannel EEG.
