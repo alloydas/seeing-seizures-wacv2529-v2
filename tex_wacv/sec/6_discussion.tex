@@ -1,0 +1,69 @@
+\section{Discussion: Why Behavioral Video Matters}
+\label{sec:discussion}
+
+Our results position video as a non-invasive complement to EEG: on this cohort
+it matches EEG at detection and surpasses it where behavior \emph{is} the
+endpoint. Four reasons make the video route worth taking seriously in
+preclinical seizure work.
+
+\noindent\textbf{Detection without electrodes.}
+For binary detection the video model reaches 0.968 macro-F1 / 0.993
+AUROC, against the EEG GRU's 0.974 / 0.996---a 0.006 margin to EEG that is small
+but consistent across five seeds (Welch $p{=}0.003$; Table~\ref{tab:results}).
+Detection is thus a \emph{parity} result rather than a win for either modality, and it is architecture-independent
+on both sides: it holds across ten video backbones and seven EEG
+models (Tables~\ref{tab:results},~\ref{tab:eegarch},~\ref{tab:vidarch}). A
+purely behavioral, electrode-free model therefore preserves detection accuracy,
+echoing the human vEpiNet system, where video cut false
+positives by a third~\cite{vepinet2024}.
+
+\noindent\textbf{The endpoint is behavioral.}
+Seizure \emph{severity} is defined behaviorally. The Racine
+scale~\cite{racine1972} grades motor manifestations such as twitching, rearing,
+rhythmic forelimb clonus, and rearing-and-falling. Video observes the very
+signal the clinical grade is built on, so it degrades gracefully as the task
+refines (macro-F1 $0.968\!\to\!0.780\!\to\!0.657$). The EEG reference, one step
+removed from motor behavior, declines more steeply from a marginally higher start
+($0.974\!\to\!0.720\!\to\!0.551$): the two modalities are level at detection and
+separate only as the task becomes explicitly behavioral. The gap widens at the
+rarest, most severe stage. Convulsive motion is unmistakable on camera yet poorly
+separated in a single EEG channel, so at five-class grading the Stage\,5 per-class
+F1 reaches 0.42 for video against 0.12 for EEG (Table~\ref{tab:perclass}). This
+ordering survives the stricter subject-disjoint protocol, though the margin narrows:
+held-out animals cost video more than they cost the EEG reference at five classes
+($0.657\!\to\!0.475$ against $0.551\!\to\!0.404$), leaving a gap of 0.071 rather
+than 0.106 (Table~\ref{tab:subjectwise}).
+
+\noindent\textbf{Scale, cost, and welfare.}
+Electrode EEG requires surgical implantation: expensive, low-throughput, and a
+source of infection, signal drift, and animal-welfare burden. A camera is cheap,
+surgery-free, and able to watch many cages at once. Video-only screening
+therefore scales to the large cohorts preclinical drug discovery needs, and it
+reduces harm in the spirit of the 3Rs. Deployment is equally favorable: the
+4M-parameter X3D-M matches the 33M R(2+1)D (Tables~\ref{tab:vidarch}
+and~\ref{tab:vidspec}), making
+real-time, edge-side monitoring realistic.
+
+\noindent\textbf{Interpretability.}
+The Grad-CAM maps of Sec.~\ref{sec:application} (Fig.~\ref{fig:gradcam})
+confirm that the detector
+attends to behavior rather than recording-setup shortcuts, a prerequisite for
+trusting a non-invasive screen.
+
+\noindent\textbf{What EEG still provides.}
+Electrodes remain indispensable. EEG captures electrographic-only
+(non-convulsive) seizures that lack a visible motor correlate, and it recovers
+precise onset timing and localization---signals to which a camera is blind. The
+two modalities are therefore complementary. The strongest system would fuse
+them---the near-empty ``video--EEG, animal'' cell that our study motivates and
+that we outline as future work (Sec.~\ref{sec:open}). What our results establish
+is that the \emph{behavioral half} of the video--EEG gold standard is far more
+automatable than its scarce use suggests.
+
+\begin{takeaway}
+\takeawaylabel The behavioral half of the video--EEG gold standard is substantially automatable:
+a camera alone matches electrode-based detection, grades severity more gracefully,
+and generalizes more stably across animals. Electrodes remain necessary for
+electrographic-only events and for precise onset timing.
+\end{takeaway}
+

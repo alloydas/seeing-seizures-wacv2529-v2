@@ -1,0 +1,43 @@
+{
+  "n": 900,
+  "by_class": {
+    "non-seizure": {
+      "n": 466,
+      "median_motion": 1.528124539748482,
+      "video_recall_low": 0.9828326180257511,
+      "video_recall_high": 0.9656652360515021,
+      "eeg_recall_low": 0.9055793991416309,
+      "eeg_recall_high": 1.0
+    },
+    "Stage 2": {
+      "n": 58,
+      "median_motion": 1.5707724742267444,
+      "video_recall_low": 0.6551724137931034,
+      "video_recall_high": 0.5862068965517241,
+      "eeg_recall_low": 0.9655172413793104,
+      "eeg_recall_high": 0.8620689655172413
+    },
+    "Stage 3": {
+      "n": 350,
+      "median_motion": 1.7815566503483315,
+      "video_recall_low": 0.8914285714285715,
+      "video_recall_high": 0.9428571428571428,
+      "eeg_recall_low": 0.5371428571428571,
+      "eeg_recall_high": 0.7771428571428571
+    },
+    "Stage 4": {
+      "n": 21,
+      "median_motion": 2.1734224039575327,
+      "video_recall_low": 0.18181818181818182,
+      "video_recall_high": 0.7,
+      "eeg_recall_low": 0.18181818181818182,
+      "eeg_recall_high": 0.0
+    }
+  },
+  "overall": {
+    "median_motion_video_right": 1.5929031890371572,
+    "median_motion_video_wrong": 1.6759675948516182,
+    "median_motion_eeg_right": 1.599906589673913,
+    "median_motion_eeg_wrong": 1.544572747271994
+  }
+}

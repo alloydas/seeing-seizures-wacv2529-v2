@@ -1,0 +1,27 @@
+\documentclass[border=2pt]{standalone}
+\input{_preamble}
+\begin{document}
+\begin{tikzpicture}
+\begin{axis}[
+  resultaxis,
+  width=10.4cm, height=5.6cm,
+  ybar=1.5pt, bar width=9pt,
+  xlabel={Stage}, ylabel={5-class per-stage F1},
+  symbolic x coords={non-sz., S2, S3, S4, S5},
+  xtick=data, xmin={non-sz.}, xmax={S5},
+  enlarge x limits=0.15,
+  ymin=0, ymax=1.32, ytick={0,0.2,0.4,0.6,0.8,1.0},
+  yticklabel style={/pgf/number format/fixed,/pgf/number format/precision=1},
+  legend pos=north east, legend columns=2, legend cell align=left,
+  nodes near coords, nodes near coords style={rotate=90, anchor=west,
+    font=\scriptsize, /pgf/number format/fixed, /pgf/number format/fixed zerofill, /pgf/number format/precision=2},
+]
+\addplot[draw=wacvblue, fill=wacvblue!70] coordinates
+  {(non-sz.,0.966) (S2,0.665) (S3,0.900) (S4,0.362) (S5,0.415)};
+\addlegendentry{Video}
+\addplot[draw=orange!85!black, fill=orange!75] coordinates
+  {(non-sz.,0.934) (S2,0.626) (S3,0.785) (S4,0.202) (S5,0.123)};
+\addlegendentry{EEG}
+\end{axis}
+\end{tikzpicture}
+\end{document}

@@ -1,0 +1,60 @@
+\section{Dataset}
+\label{sec:data}
+
+This study rests on a pooled twenty-subject synchronized video--EEG cohort. To our knowledge it is the largest paired rodent video--EEG
+corpus studied for learned seizure detection, and its scale, severity labels, and
+severely long-tailed burden are what make the head-to-head comparisons in
+Sec.~\ref{sec:application} meaningful.
+
+\noindent\textbf{Acquisition.}
+Synchronized video--EEG was recorded from twenty rats under chemically induced
+seizure protocols. Each animal was filmed in its home cage by a fixed overhead
+camera while implanted electrodes streamed synchronized EEG
+(Fig.~\ref{fig:setup}). A domain expert annotated every seizure and graded its
+behavioral severity on the Racine scale~\cite{racine1972}. Because camera
+geometry differs per cage, each clip is cropped per cage before subjects are
+pooled.
+
+\noindent\textbf{Clip extraction.}
+Around each expert annotation we extract a seizure clip and sample a matched
+non-seizure clip from a seizure-free interval of the \emph{same} session,
+yielding a pooled corpus of 24{,}131 clips over 601 recording sessions
+(12{,}197 non-seizure, 11{,}934 seizure); the same corpus expressed in recorded
+time is given in App.~\ref{sec:dataextra:cohort}, Table~\ref{tab:corpusscale}. Sampling the negative from the same
+session fixes camera, cage, and lighting across the pair, so a detector must
+separate the two from behavior alone (Fig.~\ref{fig:paired} shows one
+synchronized pair; the binary task is visualized in App.~\ref{sec:dataextra:stages},
+Fig.~\ref{fig:detexample}).
+
+% fig:paired now lives in sec/1_intro.tex so it prints on p.2 alongside its first
+% mention in the contributions list.
+
+\noindent\textbf{Severity stages.}
+Each clip carries a Racine severity label. The behavioral signal grows more overt
+with stage, from mild movement at Stage\,2 to pronounced rearing and convulsive
+motion at Stage\,4--5. This is the signal a video model reads directly and a
+single EEG channel cannot see, and it foreshadows the grading gap in
+Sec.~\ref{sec:application}. Per-stage \emph{filmstrips} illustrating this
+progression are provided in the supplement (App.~\ref{sec:dataextra:stages},
+Fig.~\ref{fig:stages}).
+
+\noindent\textbf{Long-tailed burden.}
+Seizure burden is severely uneven across animals. The four busiest supply nearly
+half of all clips, subject totals span nearly three orders of magnitude (11--3{,}091
+clips), and the most severe stage (S5, 193 clips in the entire cohort) stays rare
+throughout; the full per-subject composition is tabulated and visualized in the
+supplement (App.~\ref{sec:dataextra:cohort}, Table~\ref{tab:cohort} and
+Fig.~\ref{fig:cohortdist}). This long tail is the central statistical difficulty
+of the cohort. A single pooled score is dominated by the few high-burden animals,
+so we report per-subject metrics alongside pooled ones and use inverse-frequency
+class weighting throughout. It is also why fine-grained severity grading is so hard.
+
+\noindent\textbf{Availability and de-identification.}
+Raw recordings cannot be released, as they carry facility- and protocol-level
+identifiers. We instead release a fully de-identified cohort description: the
+per-subject statistics (App.~\ref{sec:dataextra:cohort}, Table~\ref{tab:cohort}), the task
+definitions, and the splitting protocol. All figures in this paper use
+de-identified frames with cage-side identifiers cropped or redacted. This makes the
+cohort's composition and our protocol reproducible without exposing restricted
+data. The public RodEpil benchmark~\cite{rodepil2025}, on which we externally
+validate (Sec.~\ref{sec:application}), offers a fully open complement.

@@ -1,0 +1,95 @@
+# ─── SECRETS — never commit ───
+.claude/settings.local.json
+*.pem
+*.key
+
+# ─── Large generated trees (were NOT ignored: `git add -A` would stage 110 GB) ───
+cache_frames/
+cache_abl/
+cache_bestcfg/
+output/
+# lowercase: the existing `Data/` rule does not match it on a case-sensitive fs
+data/
+
+# ─── Raw research data & session folders (never publish) ───
+Data/
+Data_cropped/
+12-09-2023/
+12-11-2023/
+12-12-2023/
+*.mp4
+*.edf
+*.avi
+*.xlsx
+
+# ─── Model outputs / large binaries ───
+*.pt
+*.pth
+*.npy
+*.npz
+classifier_out/
+classifier_out_cropped/
+based_on_eeg/segments/
+based_on_eeg/sweep/
+based_on_eeg/sweep_rate/
+based_on_eeg/trained_same_split/
+video_win_out_W4/
+video_win_out/
+
+# Large per-recording inference dumps (regenerable)
+based_on_eeg/res_RN197_*.json
+
+# ─── Python ───
+__pycache__/
+*.pyc
+
+# ─── LaTeX: track SOURCES, ignore aux/build ───
+# (the old blanket `*.tex` ignored main.tex/sec/*.tex while tracking the PDFs -- backwards)
+# ─── LaTeX aux ───
+*.aux
+*.log
+*.out
+*.nav
+*.snm
+*.toc
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+*.bbl
+*.blg
+*.brf
+*.tex.bak
+tex_wacv/_kit2027/
+wacv_paper_overleaf.zip
+
+# ─── Additional subject clip sets & cropped mirrors (data, never publish) ───
+Data_RN*/
+*_cropped/
+logs*/
+crop_verify/
+rn213_crop_preview/
+rn204_crop_preview/
+stage_segments.npz
+*_out/
+classifier_*/
+
+# ─── CSV: targeted, not blanket ───
+_clip_log.csv
+_non_seizure_clip_log.csv
+_overlap_report.csv
+seizure_video_map_*.csv
+
+# ─── Archive symlinks into /path/to/archive (code preserved in attic/) ───
+# Tracking these would give every other clone a dangling absolute-path symlink.
+# leading slash anchors to the repo root -- unanchored, these also matched
+# attic/based_on_eeg/ and silently dropped the preserved copies.
+/based_on_eeg
+/RodEpil_std
+/RodEpil_zenodo_17601357
+
+# ─── tex_wacv build artifacts / regenerable dumps ───
+tex_wacv/*.zip
+tex_wacv/**/*.zip
+tex_wacv/crawl/papers.json
+*.pptx#
+*.bak

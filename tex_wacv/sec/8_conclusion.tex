@@ -1,0 +1,19 @@
+\section{Conclusion}
+\label{sec:conclusion}
+
+We presented a large-scale empirical study of video and EEG deep learning
+for automated rodent seizure detection and severity grading, built on a pooled
+twenty-subject synchronized cohort of $\sim$24k clips. Under a single controlled,
+leakage-aware protocol, and across ten video backbones and seven EEG models, four
+results stand out: a standard Kinetics-pretrained R(2+1)D backbone \emph{matches}
+a strong EEG reference for seizure \emph{detection} (0.993 \vs\ 0.992 AUROC) from
+a non-invasive camera alone; detection is essentially backbone-agnostic, so a 4M
+model ties a 33M one; video \emph{degrades more gracefully than EEG on severity
+grading}, the one regime where the two clearly separate; and Grad-CAM confirms
+the detector attends to genuine behavior. The same backbone reaches 0.979 F1 on
+the public RodEpil benchmark once a raw-release encoding artifact is corrected.
+Together these findings show that the behavioral half of the video--EEG gold
+standard is far more automatable than its scarce use in animal studies suggests.
+The natural next step is principled, artifact-aware \emph{fusion} of the two
+modalities---validated on shared benchmarks and evaluated across subjects---for
+which this study provides both the motivation and the single-modality baselines.

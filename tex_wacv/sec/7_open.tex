@@ -1,0 +1,18 @@
+\section{Limitations and Future Work}
+\label{sec:open}
+
+Our study is deliberately scoped to unimodal models on one preclinical cohort, and
+five limitations follow from that scope. Generalization rests on five
+subject-disjoint folds of a single cohort, so multi-cohort, subject-wise evaluation
+remains the honest test, and fine-grained severity on unseen animals is where video
+gives up the most (0.662 to $0.475$ macro-F1, Table~\ref{tab:subjectwise}). Severity
+grading is the open task: the rare severe stages carry most of the error and invite
+targeted collection or the ordinal formulation of Sec.~\ref{sec:problem:ordinal},
+and our inverse-frequency weighting is reported without an ablation against
+resampling~\cite{chawla2002smote} or a focal objective~\cite{lin2017focal}.
+Cross-modal artifact rejection---the original clinical reason for recording both
+streams---remains almost unexploited computationally~\cite{frontiers_fusion2026},
+and no public \emph{paired} video--EEG animal benchmark exists to test it
+on~\cite{rodepil2025}. Finally, monitoring that runs for weeks makes streaming,
+on-device inference a practical prerequisite~\cite{vepinet2024}.
+App.~\ref{sec:openfull} develops each of the five in full.

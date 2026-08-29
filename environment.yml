@@ -1,0 +1,20 @@
+# Conda recipe equivalent to requirements.txt. Creates a DEDICATED env; do not
+# install into base, which is shared with an Isaac Lab / warp / gymnasium stack.
+#
+#   conda env create -f environment.yml
+#   conda activate eeg-seizure
+#
+# torch/torchvision come from pip against the cu121 index rather than a conda
+# channel, so the +cu121 build matches the 595.84 driver on this box.
+name: eeg-seizure
+channels:
+  - conda-forge
+dependencies:
+  - python=3.12.2
+  - pip
+  - pip:
+      - --index-url https://download.pytorch.org/whl/cu121
+      - torch==2.4.0
+      - torchvision==0.19.0
+      - --index-url https://pypi.org/simple
+      - -r requirements.txt

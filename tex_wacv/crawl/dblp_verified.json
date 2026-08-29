@@ -1,0 +1,79 @@
+[
+ {
+  "topic": "T4",
+  "dblp_key": "conf/iccv/LinGGHD17",
+  "title": "Focal Loss for Dense Object Detection",
+  "authors": [
+   "Tsung-Yi Lin",
+   "Priya Goyal",
+   "Ross B. Girshick",
+   "Kaiming He",
+   "Piotr Doll\u00e1r"
+  ],
+  "venue": "ICCV",
+  "volume": "",
+  "pages": "2999-3007",
+  "year": "2017",
+  "doi": "10.1109/ICCV.2017.324",
+  "type": "Conference and Workshop Papers",
+  "ee": "https://doi.org/10.1109/ICCV.2017.324",
+  "verified_via": "dblp publ api"
+ },
+ {
+  "topic": "T4",
+  "dblp_key": "journals/jair/ChawlaBHK02",
+  "title": "SMOTE: Synthetic Minority Over-sampling Technique",
+  "authors": [
+   "Nitesh V. Chawla",
+   "Kevin W. Bowyer",
+   "Lawrence O. Hall",
+   "W. Philip Kegelmeyer"
+  ],
+  "venue": "J. Artif. Intell. Res.",
+  "volume": "16",
+  "pages": "321-357",
+  "year": "2002",
+  "doi": "10.1613/JAIR.953",
+  "type": "Journal Articles",
+  "ee": "https://doi.org/10.1613/jair.953",
+  "verified_via": "dblp publ api"
+ },
+ {
+  "topic": "T4",
+  "dblp_key": "journals/nn/BudaMM18",
+  "title": "A systematic study of the class imbalance problem in convolutional neural networks",
+  "authors": [
+   "Mateusz Buda",
+   "Atsuto Maki",
+   "Maciej A. Mazurowski"
+  ],
+  "venue": "Neural Networks",
+  "volume": "106",
+  "pages": "249-259",
+  "year": "2018",
+  "doi": "10.1016/J.NEUNET.2018.07.011",
+  "type": "Journal Articles",
+  "ee": "https://doi.org/10.1016/j.neunet.2018.07.011",
+  "verified_via": "dblp publ api"
+ },
+ {
+  "topic": "T4",
+  "dblp_key": "conf/cvpr/CuiJLSB19",
+  "title": "Class-Balanced Loss Based on Effective Number of Samples",
+  "authors": [
+   "Yin Cui",
+   "Menglin Jia",
+   "Tsung-Yi Lin",
+   "Yang Song 0009",
+   "Serge J. Belongie"
+  ],
+  "venue": "CVPR",
+  "volume": "",
+  "pages": "9268-9277",
+  "year": "2019",
+  "doi": "10.1109/CVPR.2019.00949",
+  "type": "Conference and Workshop Papers",
+  "ee": "http://openaccess.thecvf.com/content_CVPR_2019/html/Cui_Class-Balanced_Loss_Based_on_Effective_Number_of_Samples_CVPR_2019_paper.html",
+  "verified_via": "dblp publ api"
+ }
+]

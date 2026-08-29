@@ -1,0 +1,28 @@
+% Shared preamble for the standalone result plots (fig/src/*.tex).
+% Compile:  tectonic -X compile fig/src/<name>.tex --outdir fig/src/out
+% then copy fig/src/out/<name>.pdf over fig/<name>.pdf
+%
+% Palette matches the paper: wacvblue is main.tex's link colour, orange is xcolor's.
+\usepackage{iftex}
+\ifXeTeX
+  \usepackage{fontspec}
+  \setmainfont{texgyretermes}[Extension=.otf, UprightFont=*-regular,
+    BoldFont=*-bold, ItalicFont=*-italic, BoldItalicFont=*-bolditalic]
+\fi
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usepackage{amsmath}
+\definecolor{wacvblue}{rgb}{0.21,0.49,0.74}
+\pgfplotsset{
+  resultaxis/.style={
+    axis background/.style={fill=white},
+    grid=major, ymajorgrids=true, xmajorgrids=false,
+    grid style={gray!25, line width=0.3pt},
+    tick align=outside, tick pos=left,
+    label style={font=\small}, tick label style={font=\small},
+    legend style={font=\small, draw=gray!50, fill=white, fill opacity=0.9,
+                  text opacity=1, inner sep=2pt},
+  },
+  vidmark/.style={wacvblue, mark=*, thick, mark size=2.2pt},
+  eegmark/.style={orange, mark=o, thick, dashed, mark size=2.2pt},
+}

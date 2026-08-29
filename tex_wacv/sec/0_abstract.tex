@@ -1,0 +1,20 @@
+\begin{abstract}
+Video and EEG are widely used to study seizures in animals. However, manual
+scoring remains a huge bottleneck. Making this automatic is a big challenge that
+few have solved for animal models. This study tackles the problem using data from
+twenty rats, analyzing about 24000 paired clips from 601 sessions. Experts graded
+the seizures from a mild Stage\,2 to a severe Stage\,5. Ten video models and seven
+EEG models were tested under strict rules to see how well they could spot seizures
+and grade their exact severity. For basic detection, both tools did well, while
+EEG was slightly better, scoring 0.974 compared to video's 0.968. Both tools also
+worked well on unseen rats. The gap grew when grading the exact seizure levels. In
+the five-level test, video scored 0.657, easily beating EEG's 0.560. The two
+methods also made different types of mistakes. Video usually just confused stages
+that were next to each other. EEG was more likely to miss seizures entirely or mix
+up very different stages. The size of the video model did not matter much. A tiny
+model did almost as well as a huge one. Instead, tracking motion over time was the
+real key. An additional test on the outside RodEpil dataset confirmed these
+results, with the model score reaching 0.979. Overall, we demonstrate that cameras
+offer a great, pain-free way to track animal seizures and work very well alongside
+typical EEG tools.
+\end{abstract}

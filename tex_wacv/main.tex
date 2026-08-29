@@ -1,0 +1,64 @@
+% WACV 2027 -- Applications Track
+% Empirical study: video vs. EEG deep learning (head-to-head, not fused) for
+% rodent seizure detection and severity grading. The literature survey lives in the
+% supplementary material (sec/9_supplement.tex).
+% Modular project: content lives in sec/*.tex; references in main.bib.
+
+\documentclass[10pt,twocolumn,letterpaper]{article}
+
+% wacv.sty loads xcolor[dvipsnames]; pre-pass `table' so \rowcolor works.
+\PassOptionsToPackage{table}{xcolor}
+
+%%%%%%%%% PAPER TYPE  - PLEASE UPDATE FOR FINAL VERSION
+\usepackage[review,applications]{wacv}   % REVIEW version, Applications track
+% \usepackage[review,algorithms]{wacv}   % REVIEW version, Algorithms track
+% \usepackage{wacv}                       % CAMERA-READY (shows author block below)
+% \usepackage[pagenumbers]{wacv}          % arXiv-style: camera-ready + page numbers
+
+% Additional packages (before hyperref)
+\input{preamble}
+
+% hyperref last
+\definecolor{wacvblue}{rgb}{0.21,0.49,0.74}
+\usepackage[pagebackref,breaklinks,colorlinks,allcolors=wacvblue]{hyperref}
+
+%%%%%%%%% PAPER ID  - PLEASE UPDATE
+\def\wacvPaperID{*****} % *** Enter the WACV Paper ID here
+\def\confName{WACV}
+\def\confYear{2027}
+
+%%%%%%%%% TITLE
+\title{Seeing Seizures: A Large-Scale Empirical Study of Video and EEG
+Deep Learning for Automated Rodent Seizure Detection and Severity Grading}
+
+%%%%%%%%% AUTHORS (shown only in camera-ready / pagenumbers builds)
+\author{Anonymous WACV Applications Track submission}
+
+\begin{document}
+\maketitle
+
+\input{sec/0_abstract}
+\input{sec/1_intro}
+\input{sec/2_related}
+\input{sec/3_problem}
+\input{sec/4_data}
+\input{sec/5_application}
+\input{sec/7_open}
+\input{sec/8_conclusion}
+
+{
+    \small
+    \bibliographystyle{ieeenat_fullname}
+    \bibliography{main}
+}
+
+% ---------------------------------------------------------------------------
+% Supplementary material: the full literature survey (video / video-EEG
+% seizure detection across modality x subject). Kept out of the main empirical
+% paper; for a WACV submission this can be split into a separate PDF.
+% ---------------------------------------------------------------------------
+\clearpage
+\appendix
+\input{sec/9_supplement}
+
+\end{document}

@@ -1,0 +1,115 @@
+\section{Problem Setup}
+\label{sec:problem}
+
+We now state the detection and grading problem formally, fixing the notation and
+evaluation protocol used throughout our experiments (Sec.~\ref{sec:application}).
+Figure~\ref{fig:pipeline} summarizes the pipeline.
+
+\subsection{Flat multi-class formulation}
+\label{sec:problem:flat}
+
+\noindent\textbf{Clips and labels.}
+A recording session provides temporally synchronized video and EEG. Around each
+expert-annotated event we extract a clip $c=(\mathbf{V},\mathbf{E})$, where
+$\mathbf{V}\in\mathbb{R}^{T\times H\times W\times 3}$ is a short RGB video segment
+and $\mathbf{E}\in\mathbb{R}^{C\times L}$ the corresponding $C$-channel EEG trace.
+Matched non-seizure clips are sampled from seizure-free intervals of the same
+sessions. Each clip carries a severity label $y\in\{0,1,2,3,4\}$: $0$
+denotes non-seizure and $1$--$4$ the ictal stages (Racine~\cite{racine1972}
+Stage\,2--5). Racine Stage\,1 (mouth and facial automatisms) is annotated in this
+cohort but occurs in only six clips, too few to train or evaluate a class on, so we
+exclude it. The modeled label space begins at Stage\,2 as a consequence of the
+data, and not because the scale starts there. The scale itself was derived from electrically
+kindled seizures, and its transfer to chemically induced models is not
+automatic~\cite{vanerum2019racine}; we use the grades our annotator assigned and do not re-derive a
+model-specific scale. Each clip also belongs to a subject $s\in\mathcal{S}$ and a session
+$r\in\mathcal{R}$. The corpus pools clips from all subjects.
+Figure~\ref{fig:setup} shows a representative frame of the recording setup;
+because camera geometry differs per cage, each clip is cropped per cage before
+subjects are pooled.
+
+% fig:setup now lives in sec/1_intro.tex so it prints on p.2 alongside its first
+% mention in the contributions list.
+
+\noindent\textbf{Task granularities.}
+We study three classification tasks of increasing difficulty, each obtained by
+collapsing the stage label through a map $g_k:\{0,\dots,4\}\to\{0,\dots,k-1\}$:
+\begin{itemize}[leftmargin=1.2em,itemsep=1pt,topsep=2pt]
+  \item \textbf{Detection} ($k{=}2$): $g_2(y)=\mathbf{1}[y>0]$: seizure \vs\
+        non-seizure.
+  \item \textbf{Coarse grading} ($k{=}3$): non-seizure / mild (Stage\,2--3) /
+        severe (Stage\,4--5).
+  \item \textbf{Fine grading} ($k{=}5$): the full non-seizure / Stage\,2--5 scale.
+\end{itemize}
+
+\noindent\textbf{Modalities.}
+Each task pairs two \emph{unimodal} predictors that we compare head-to-head:
+a video model $f_{\mathrm{V}}:\mathbf{V}\mapsto\hat{y}$ and an EEG model
+$f_{\mathrm{E}}:\mathbf{E}\mapsto\hat{y}$. The video model consumes a fixed number
+of sampled frames per clip. The EEG model is trained on short fixed windows and
+forms a clip decision by mean-pooling the window posteriors. We keep the two
+modalities \emph{separate} by design: our goal is to measure how far each single
+modality gets on its own, so a fused predictor $f_{\mathrm{V,E}}$ is out of scope
+and left to future work (Sec.~\ref{sec:open}).
+
+\noindent\textbf{Evaluation protocol.}
+Seizure burden is highly uneven across subjects, so a single pooled score can
+mislead. We therefore adopt three safeguards throughout. (i)~\emph{Session-disjoint
+splits}: all clips from a session $r$ fall entirely in train or validation, so no
+clip leaks across the split. The split seed is shared between the
+video and EEG models so their numbers are directly comparable. (ii)~\emph{Class
+imbalance} is handled with inverse-frequency-weighted cross-entropy in place of
+resampling. (iii)~We report \emph{macro-averaged} metrics (macro-F1 and, for
+detection, AUROC) together with the Matthews correlation coefficient (MCC);
+App.~\ref{sec:metrics} states each of them formally, along with the
+fold- and seed-aggregation convention.
+The two summarize different parts of the same confusion matrix: macro-F1 weights
+every stage equally, so the rare severe classes dominate it, while MCC is computed
+from the whole table and so follows the frequent classes. We report both so
+that no conclusion rests on one weighting, and always pair the pooled score with a
+per-subject breakdown, since aggregate accuracy is dominated by the few high-burden animals.
+Sec.~\ref{sec:application} additionally reports a stricter protocol:
+held-out-\emph{subject} generalization via subject-disjoint cross-validation.
+
+\subsection{Conditional ordinal severity grading}
+\label{sec:problem:ordinal}
+
+The $k{=}5$ task above places non-seizure and the four ictal stages on a single
+flat axis, which misstates the label space in two ways. First, ``non-seizure'' is
+not a point on the Racine scale~\cite{racine1972}: the scale grades the motor
+manifestations of a seizure, so even its lowest rung is an ictal event, and the
+absence of an event is a different kind of object altogether. Second, a flat
+softmax treats the four stages as exchangeable, so predicting Stage\,5 for a
+Stage\,2 clip costs exactly what predicting Stage\,3 costs, even though severity is
+ordered and the two errors differ in clinical consequence.
+
+We therefore also study severity as a \emph{conditional ordinal} problem. Detection
+and grading factorize,
+\begin{equation}
+p(y \mid c) \;=\; \underbrace{p(\text{seizure} \mid c)}_{\text{detection}}
+\;\cdot\;
+\underbrace{p(s \mid c,\ \text{seizure})}_{\text{severity grading}},
+\label{eq:conditional}
+\end{equation}
+and we condition on the first factor: grading is posed on seizure clips alone, over
+the ordered stage set $s\in\{\mathrm{S2}\prec\mathrm{S3}\prec\mathrm{S4}\prec
+\mathrm{S5}\}$. This matches how the annotation is produced, since an expert
+first confirms an event and then grades it, and it removes the 12{,}197 non-seizure clips
+that dominate the flat 5-class objective.
+
+\noindent\textbf{Ordinal head.}
+Instead of four independent logits, an ordinal model predicts the $K{-}1$ cumulative
+decisions $p(s \succ \mathrm{S2})$, $p(s \succ \mathrm{S3})$, $p(s \succ
+\mathrm{S4})$, whose monotone structure encodes the ordering directly; the stage
+follows from how many thresholds are exceeded. The nominal four-way classifier
+trained on the same clips is the control, so any difference is attributable to the
+ordinal structure alone.
+
+\noindent\textbf{Metrics.}
+Macro-F1 keeps continuity with the flat tasks, but it is order-blind, so we pair it
+with measures that are not: the mean absolute stage error
+$\frac{1}{N}\sum_i|\hat{s}_i-s_i|$, quadratic weighted $\kappa$, and the rate of
+\emph{large-stage errors} $|\hat{s}-s|\ge 2$, which is the quantity a screening tool
+most needs to keep small. Because the deployment question is a new animal, we
+evaluate under the subject-disjoint five-fold protocol of
+Sec.~\ref{sec:crossmodal}.

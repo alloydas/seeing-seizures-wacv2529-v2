@@ -1,0 +1,78 @@
+# requirements.txt — video-EEG rodent seizure analysis toolkit
+#
+# Every pin below was read back from the working environment on 2026-08-25 and
+# re-verified by import (CPython 3.12.2, NVIDIA driver 595.84, torch CUDA 12.1).
+#
+#   python -m venv .venv && . .venv/bin/activate
+#   pip install --index-url https://download.pytorch.org/whl/cu121 \
+#       torch==2.4.0 torchvision==0.19.0
+#   pip install -r requirements.txt
+#
+# Do NOT install into the conda base env: it is shared with an Isaac Lab /
+# warp / gymnasium stack and these upgrades will collide with it.
+
+# ── Deep learning ─────────────────────────────────────────────────────────
+# torch 2.4.0 <-> torchvision 0.19.0 is the only valid pairing here (both cu121).
+#   FLOOR   torch>=2.4  every trainer uses torch.amp.GradScaler("cuda") and
+#                       torch.autocast("cuda", ...).
+#   CEILING torch<=2.5  sweep_session.py calls torch.load() without
+#                       weights_only=; torch 2.6 flipped that default to True
+#                       and raises UnpicklingError on these checkpoints.
+torch==2.4.0
+torchvision==0.19.0
+
+# Abandonware (last release Jan 2022) but it supplies slowfast_r50 and x3d_m to
+# train_pooled.build_video_model(). Its `transforms` subpackage imports
+# torchvision.transforms.functional_tensor, removed in torchvision>=0.17 — only
+# pytorchvideo.models.hub is safe to touch. Do not bump torchvision untested.
+pytorchvideo==0.1.5
+fvcore==0.1.5.post20221221
+iopath==0.1.10
+
+# TimeSformer + VideoMAE backbones (train_pooled_timesformer.py / _videomae.py).
+transformers==4.49.0
+huggingface-hub==0.29.1
+tokenizers==0.21.0
+safetensors==0.5.3
+einops==0.8.1
+
+# ── Core scientific ───────────────────────────────────────────────────────
+# scipy 1.13.1 declares numpy<2.3 — bump these two together or not at all.
+# The repo is numpy-2 clean (no np.float_ / np.NaN / np.trapz / np.in1d).
+numpy==2.2.6
+scipy==1.13.1
+scikit-learn==1.8.0
+xgboost==3.3.0
+joblib==1.5.3
+
+# ── Video / IO ────────────────────────────────────────────────────────────
+# Nothing in the repo calls cv2.imshow, so opencv-python-headless is a strictly
+# better drop-in on a headless box (drops the libGL/libgthread dependency).
+opencv-python==4.13.0.92
+# Ships the ffmpeg 7.0.2-static binary the cutters resolve through
+# imageio_ffmpeg.get_ffmpeg_exe(); a system ffmpeg is then optional.
+imageio-ffmpeg==0.6.0
+
+# ── EEG ───────────────────────────────────────────────────────────────────
+mne==1.12.1
+# HARD PIN — do not float. edf_clip_writer.write_edf_clip() depends on the
+# edfio 0.4.x API exactly:
+#     EdfSignal(v, sampling_frequency=, label=, physical_range=(lo, hi))
+#     Edf(signals, data_record_duration=).write(path)
+# It replaced mne.export.export_raw, which wrote ONE physical range shared
+# across all channels and crushed the biopotential in 69% of clips to a median
+# of 4 unique values. An API change here can corrupt clips SILENTLY — the files
+# still open, they just carry a destroyed waveform.
+edfio==0.4.13
+
+# ── Plotting ──────────────────────────────────────────────────────────────
+matplotlib==3.10.8
+
+# ── Utility ───────────────────────────────────────────────────────────────
+openpyxl==3.1.5
+tqdm==4.67.3
+tabulate==0.10.0
+
+# ── Not required by the live pipeline ─────────────────────────────────────
+# pandas    only attic/based_on_eeg/infer.py needs it
+# wandb     lazy-imported and guarded by --wandb_project; not installed here

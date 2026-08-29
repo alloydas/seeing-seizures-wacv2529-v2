@@ -1,0 +1,174 @@
+\documentclass[11pt]{article}
+\usepackage[margin=0.8in]{geometry}
+\usepackage{amssymb}          % \square checkbox
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage[hidelinks]{hyperref}
+
+% --- palette
+\definecolor{t1}{HTML}{B00020}   % Tier 1 (blocking)
+\definecolor{t2}{HTML}{B36B00}   % Tier 2
+\definecolor{t3}{HTML}{2E7D32}   % Tier 3
+\definecolor{effS}{HTML}{2E7D32} % small
+\definecolor{effM}{HTML}{B36B00} % medium
+\definecolor{effL}{HTML}{B00020} % large
+\definecolor{boxbg}{HTML}{F2F4F7}
+
+% --- effort badge
+\newcommand{\eff}[2]{\,\colorbox{#1}{\textcolor{white}{\scriptsize\bfseries\,#2\,}}}
+\newcommand{\effS}{\eff{effS}{Small}}
+\newcommand{\effM}{\eff{effM}{Med}}
+\newcommand{\effL}{\eff{effL}{Large}}
+\newcommand{\effSM}{\eff{effM}{Small--Med}}
+\newcommand{\effML}{\eff{effL}{Med--Large}}
+
+% --- tier heading
+\newcommand{\tier}[2]{%
+  \vspace{6pt}\par\noindent{\color{#1}\rule{\linewidth}{2.2pt}}\par\vspace{1pt}%
+  {\large\bfseries\color{#1} #2}\par\vspace{3pt}}
+
+% --- per-item labels
+\newcommand{\dfd}[1]{{\itshape Defends:} #1.\ }
+\newcommand{\run}[1]{{\itshape Run:} #1.\ }
+\newcommand{\rsk}[1]{{\itshape Risk if skipped:} #1.}
+
+\newlist{checks}{itemize}{1}
+\setlist[checks]{label=$\square$, leftmargin=1.6em, itemsep=7pt, topsep=3pt}
+
+\setlength{\parindent}{0pt}
+\titlespacing*{\section}{0pt}{6pt}{2pt}
+
+\begin{document}
+
+\begin{center}
+  {\LARGE\bfseries Ablation \& Experiment Plan}\\[2pt]
+  {\large\itshape Seeing Seizures --- Video vs.\ EEG Deep Learning for Rodent Seizure Detection \& Grading (WACV 2027)}\\[4pt]
+  {\small Prioritised to harden the paper's claims against review. Tick items as runs complete.}
+\end{center}
+
+\vspace{4pt}
+\colorbox{boxbg}{\parbox{\dimexpr\linewidth-2\fboxsep}{%
+\textbf{Four load-bearing claims each ablation protects:}\\
+\textbf{C1} video matches/beats EEG at \emph{detection}\quad
+\textbf{C2} detection is \emph{backbone-agnostic} (4M ties 33M)\\
+\textbf{C3} video grades \emph{gracefully} while EEG \emph{collapses}\quad
+\textbf{C4} video generalises more \emph{stably} across unseen animals\\
+\textbf{C5} the detector attends to \emph{behaviour}, not shortcuts \quad(plus the ``video-understanding'' / ``screening tool'' framing).}}
+
+\vspace{4pt}
+{\small Effort key: \effS\ \effM\ \effL\ . Two expert reviews (claim$\to$evidence gaps; peer-paper norms) converged on the Tier-1 four.}
+
+% ============================================================= TIER 1
+\tier{t1}{TIER 1 --- Blocking. Reviewers will demand these.}
+\begin{checks}
+  \item \textbf{1.\ Multi-seed runs + significance test}\ \effM\\
+  \dfd{C1, C2}
+  \run{$\ge$5 seeds for R(2+1)D and the EEG GRU on all three tasks; $\ge$5 seeds for the top/middle/bottom video backbones at detection; paired test (McNemar on labels, bootstrap on macro-F1). Report mean\,$\pm$\,std in the results / EEG-arch / video-arch tables}
+  \rsk{``backbone-agnostic'' asserts a 0.028 macro-F1 spread is noise, but with $n{=}1$ you cannot show it \emph{is} noise. Seeds most likely \emph{help} you. Also fixes the non-monotone data-efficiency dip (12 subj $\to$ 0.946)}
+
+  \item \textbf{2.\ Subject-disjoint CV for GRADING (3- and 5-class)}\ \effM\\
+  \dfd{C3 --- the paper's most novel claim}
+  \run{re-run 3/5-class grading (video + EEG) under the \emph{same} subject-disjoint 5-fold splits already built for detection; report macro-F1 mean\,$\pm$\,std and per-fold S4/S5 per-class F1. (Doing leave-one-subject-out, 20-fold, also strengthens C4's ``3.4$\times$ more stable''.)}
+  \rsk{you call subject-disjoint ``the honest test'' yet give it only to the \emph{weaker} claim (detection); grading uses the split you disown. \textbf{Caution:} 193 S5 clips are concentrated in a few animals, so holding them out may hurt --- better you find out before a reviewer does}
+
+  \item \textbf{3.\ Multi-channel EEG baseline}\ \effML\\
+  \dfd{C1, C3 (fairness of the cross-modal comparison)}
+  \run{train the best EEG models (GRU, TCN) on all available channels / a standard montage (not just the first channel) for detection + grading; report how much the gap narrows. \textbf{Free partial fix:} state that Ganguly --- the EEG model you echo --- is \emph{also} single-channel, so you match the peer norm}
+  \rsk{the most credible ``you hobbled the baseline'' attack, and you already self-flag it. Currently no experimental rebuttal}
+
+  \item \textbf{4.\ Single-frame (appearance-only) baseline}\ \effS\\
+  \dfd{the ``video-understanding problem'' framing}
+  \run{train a 2D image classifier (or the backbone with $T{=}1$) on one frame per clip, detection, same split; add the $T{=}1$ and $T{=}4$ points to the frames table}
+  \rsk{near-mandatory at a video venue. Your own frame ablation (0.960$\to$0.970$\to$0.972) hints a single frame may already reach $\sim$0.95 --- either you prove temporal dynamics matter, or you learn to soften the framing}
+\end{checks}
+
+% ============================================================= TIER 2
+\tier{t2}{TIER 2 --- Strong. Cheap credibility + preempts obvious questions.}
+\begin{checks}
+  \item \textbf{5.\ Confusion matrices + ordinal metric for grading}\ \effS\ \ {\small(\textbf{do this even though it's Tier 2 --- cheapest big win})}\\
+  \dfd{``video degrades \emph{gracefully}''}
+  \run{report 3/5-class confusion matrices (video vs.\ EEG) and an ordinal metric (quadratic-weighted $\kappa$ / mean stage-distance). Predictions already exist}
+  \rsk{macro-F1 treats ``S5$\to$S4'' the same as ``S5$\to$non-seizure,'' so it cannot substantiate ``graceful.'' If video's errors are off-by-one-stage while EEG's scatter, that \emph{proves} the story}
+
+  \item \textbf{6.\ Motion-representation input: RGB vs.\ optical-flow vs.\ frame-difference}\ \effM\\
+  \dfd{C5 + the core ``seizure = whole-body motion'' thesis; a \emph{named} RodEpil ablation}
+  \run{train the detector on each input type; a pure-motion input matching RGB shows the model keys on motion (complements Grad-CAM; echoes your RodEpil appearance-shortcut caution)}
+  \rsk{RodEpil ablates exactly this; its absence is a visible gap vs.\ the benchmark you validate on}
+
+  \item \textbf{7.\ Operating-point / deployment metrics}\ \effS\\
+  \dfd{the ``non-invasive screening tool / 3Rs / edge'' framing}
+  \run{specificity, precision at a fixed sensitivity, \textbf{false-alarms per hour}, PR curves, calibration (ECE) --- mostly from existing scores}
+  \rsk{you cite vEpiNet's one-third FP reduction but never report your own FP burden --- \emph{the} deployment metric for a screen}
+
+  \item \textbf{8.\ EEG window / stride / pooling + sampling-rate sweep}\ \effSM\\
+  \dfd{``Is the EEG baseline strong enough?''}
+  \run{for the best EEG model sweep window (2/4/6/8\,s), stride, clip-aggregation (mean vs.\ attention pool), and decimation rate. (Prior analysis reportedly found 4\,s $>$ 6\,s --- worth confirming)}
+  \rsk{you gave the \emph{video} side a temporal ablation but the EEG side none; ``architecture diversity $\ne$ tuning''}
+
+  \item \textbf{9.\ Class-imbalance-handling ablation}\ \effM\\
+  \dfd{the rare-stage grading numbers (S5 F1 0.42 vs.\ 0.03)}
+  \run{inverse-frequency weighting (current) vs.\ focal loss vs.\ resampling / class-balanced loss, both modalities, 5-class}
+  \rsk{one recipe is used; a reviewer asks whether EEG's S5 collapse is \emph{modality} or just a recipe better-matched to video}
+
+  \item \textbf{10.\ Pose / skeleton video baseline}\ \effL\ \ {\small(lighter stand-in: hand-crafted motion-energy baseline \effS)}\\
+  \dfd{the ``how far does \emph{standard video} get'' framing --- the one method \emph{family} you omit}
+  \run{DeepLabCut/SLEAP keypoints $\to$ classifier (or a VSViG-style skeleton model), detection + grading}
+  \rsk{your two closest peers (Sabnis, VSViG) are \emph{both} pose-based; either result is publishable, but omitting it is the most predictable community ask}
+\end{checks}
+
+% ============================================================= TIER 3
+\tier{t3}{TIER 3 --- Polish / robustness (several are cheap --- infra already exists).}
+\begin{checks}
+  \item \textbf{11.\ Late-fusion headroom probe}\ \effS\\
+  \dfd{the ``strongest system would fuse them'' motivation}
+  \run{one number: average-posterior or a logistic meta-learner over the video and EEG scores. Present as a probe, not a contribution --- keeps ``fusion out of scope'' intact}
+  \rsk{preempts ``why no fusion at all?''. (Already on your deferred list.)}
+
+  \item \textbf{12.\ Temporal-shuffle / static-frame control}\ \effS\\
+  \dfd{that both your cohort \emph{and} re-encoded RodEpil reflect genuine motion}
+  \run{evaluate the trained detector with frames temporally shuffled; a drop $\Rightarrow$ genuine dynamics, high accuracy $\Rightarrow$ residual appearance leakage}
+  \rsk{you fixed the fps/frame-count/crop leak you \emph{found}; a shuffle control is the standard proof none remains}
+
+  \item \textbf{13.\ Continuous sliding-window localisation}\ \effM\ \ {\small(RN197 frame-native infra reportedly exists)}\\
+  \dfd{the deployment / ``screening'' framing}
+  \run{sliding-window inference over full sessions; event-level precision/recall, false-alarms per hour, detection latency}
+  \rsk{all results assume pre-segmented clips; ``what's the false-alarm rate on raw hours of video?'' is the deployment question}
+
+  \item \textbf{14.\ Cross-dataset zero-shot transfer (cohort $\leftrightarrow$ RodEpil)}\ \effM\\
+  \dfd{the generalisation contribution --- goes \emph{beyond} RodEpil}
+  \run{train on your cohort, test on RodEpil (and reverse), zero-shot, with honest domain-shift caveats}
+  \rsk{your ``external validation'' currently \emph{re-trains} on RodEpil (validates the method, not the trained model). A zero-shot number is a genuine differentiator}
+
+  \item \textbf{15.\ Measured real-time throughput}\ \effS\\
+  \dfd{``real-time, edge-side monitoring realistic'' + the X3D efficiency headline}
+  \run{FPS / ms-per-clip on named hardware for X3D vs.\ R(2+1)D}
+  \rsk{efficiency is argued only via parameter count; wall-clock substantiates it cheaply}
+
+  \item \textbf{16.\ Background / crop robustness}\ \effSM\\
+  \dfd{C5 (``behaviour, not cage background'') --- a quantitative Grad-CAM}
+  \run{background-masking (keep only the animal) or train-on-one-crop / test-on-another; show accuracy is preserved}
+  \rsk{Grad-CAM is only qualitative; this rules out cage-framing shortcuts under same-subject session splits}
+
+  \item \textbf{17.\ Inter-annotator agreement / human ceiling}\ \effM\ {\small(human cost)}\\
+  \dfd{the interpretability of all grading numbers}
+  \run{a second expert re-grades a stratified subset ($\sim$300--500 clips); report weighted Cohen's $\kappa$ as a noise ceiling}
+  \rsk{without a ceiling, 0.66 macro-F1 is uninterpretable --- it may already be at human agreement (i.e.\ video is near-optimal)}
+\end{checks}
+
+% ============================================================= FREE
+\tier{t3}{Free wins --- text only, no experiments (I can apply these now).}
+\begin{checks}
+  \item \textbf{Ganguly single-channel defence} in Sec.~3 --- neutralises the EEG-fairness objection (\#3) for free.
+  \item \textbf{Sec.~7 caveats:} grading is validated on a \emph{single} cohort (RodEpil is binary-only), and a \emph{single} annotator graded (label-noise limitation).
+\end{checks}
+
+% ============================================================= SUMMARY
+\vspace{4pt}
+\colorbox{boxbg}{\parbox{\dimexpr\linewidth-2\fboxsep}{%
+\textbf{If you only do a handful} (both reviews converged here): \textbf{\#2} subject-disjoint grading, \textbf{\#1} seeds, \textbf{\#5} confusion/ordinal, \textbf{\#3} multi-channel EEG (or at least the free Ganguly text defence), plus \textbf{\#4} single-frame (tiny, and it's a video venue). That set hardens all four load-bearing claims.\\[3pt]
+\textbf{Leverages you already have:} subject-disjoint fold infra $\to$ \#2; existing predictions $\to$ \#5, \#7; RN197 sliding-window $\to$ \#13; the RodEpil pipeline $\to$ \#14.}}
+
+\end{document}
