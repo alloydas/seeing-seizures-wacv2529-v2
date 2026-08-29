@@ -1,6 +1,6 @@
 # Video–EEG Seizure Analysis
 
-**📊 Project page:** [https://anonymous.4open.science/w/seeing-seizures-wacv2529-v2-38FE/index.html](https://anonymous.4open.science/w/seeing-seizures-wacv2529-v2-38FE/index.html) — interactive results, seizure clips with paired ECG, Grad-CAM videos, and the full backbone leaderboards.
+**📊 Project page:** [https://anonymous.4open.science/w/seeing-seizures-wacv2529-v2-7915/index.html](https://anonymous.4open.science/w/seeing-seizures-wacv2529-v2-7915/index.html) — interactive results, seizure clips with paired ECG, Grad-CAM videos, and the full backbone leaderboards.
 
 **🧠 Model weights:** [https://drive.google.com/drive/folders/1mAclhqRjE9wAIW_B6Jh2yF-nfW54Df5L?usp=drive_link](https://drive.google.com/drive/folders/1mAclhqRjE9wAIW_B6Jh2yF-nfW54Df5L?usp=drive_link) — best checkpoint per task; checksums and loading notes in `models/`.
 
@@ -48,7 +48,7 @@ cache building, annotation parsing and all the table/figure generators.
 ## Quick start
 
 ```bash
-git clone https://anonymous.4open.science/r/seeing-seizures-wacv2529-v2-38FE/
+git clone https://anonymous.4open.science/r/seeing-seizures-wacv2529-v2-7915/
 cd EEG-seizure-classification
 
 python -m venv .venv && . .venv/bin/activate

@@ -197,8 +197,8 @@ a{color:var(--petrol)}
   <p class="authors"><a href="#" onclick="return false">Anonymous Authors</a><sup>1</sup></p>
   <p class="affil"><sup>1</sup> Institution withheld for double-blind review</p>
   <div class="btnrow">
-    <a class="btn" href="https://anonymous.4open.science/api/repo/seeing-seizures-wacv2529-v2-38FE/file/tex_wacv/main.pdf" target="_blank" rel="noopener">📄 Paper</a>
-    <a class="btn" href="https://anonymous.4open.science/r/seeing-seizures-wacv2529-v2-38FE/" target="_blank" rel="noopener">💻 Code</a>
+    <a class="btn" id="btn-paper" href="https://anonymous.4open.science/api/repo/seeing-seizures-wacv2529-v2-7915/file/tex_wacv/main.pdf" target="_blank" rel="noopener">📄 Paper</a>
+    <a class="btn" id="btn-code" href="https://anonymous.4open.science/r/seeing-seizures-wacv2529-v2-7915/" target="_blank" rel="noopener">💻 Code</a>
     <a class="btn" href="https://drive.google.com/drive/folders/1mAclhqRjE9wAIW_B6Jh2yF-nfW54Df5L?usp=drive_link" target="_blank" rel="noopener">🧠 Models</a>
     <a class="btn" href="#bibtex">❞ BibTeX</a>
   </div>
@@ -736,6 +736,20 @@ radCur=radTarget();
 drawAll();
 addEventListener("resize",drawAll);
 matchMedia("(prefers-color-scheme:dark)").addEventListener("change",drawAll);
+</script>
+<script>
+/* Served through anonymous.4open.science/w/<id>/..., the anonymization <id> is in the
+   address bar. Deriving the Paper and Code URLs from it at load time makes the buttons
+   correct under ANY id 4open assigns -- snapshots never go stale. Anywhere else, the
+   static hrefs stand. */
+(function(){
+  var m=location.pathname.match(/^\/w\/([^/]+)\//);
+  if(!m)return;
+  var id=m[1],o=location.origin;
+  var p=document.getElementById("btn-paper"),c=document.getElementById("btn-code");
+  if(p)p.href=o+"/api/repo/"+id+"/file/tex_wacv/main.pdf";
+  if(c)c.href=o+"/r/"+id+"/";
+})();
 </script>
 </body>
 </html>
